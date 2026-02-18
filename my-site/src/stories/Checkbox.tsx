@@ -1,131 +1,96 @@
-// src/components/Checkbox/Checkbox.tsx
 import React from "react";
+import "./checkbox.css";
 
-type Width = "hug" | "fill";
-type State = "default" | "hover" | "selected" | "error" | "disabled";
+export type CheckboxState = "default" | "hover" | "selected" | "error" | "disabled";
+export type CheckboxWidth = "hug" | "fill";
 
 export type CheckboxProps = {
   label: string;
-  width?: Width;          // fill / hug
-  border?: boolean;       // border: true / false
-  state?: State;          // default / hover / selected / error / disabled
-  showHelp?: boolean;     // 右側の ? を表示するか
+  width?: CheckboxWidth;      // "hug" | "fill"
+  border?: boolean;           // 囲み枠の有無
+  state?: CheckboxState;      // 見た目状態
+  showHelp?: boolean;         // ? アイコン表示
+  helpAriaLabel?: string;     // アクセシビリティ用
+  onHelpClick?: () => void;
+
+  /**
+   * 運用で実際にフォーム部品として使うための拡張
+   * Storybook上は state が優先されるようにしてる
+   */
+  checked?: boolean;
+  disabled?: boolean;
+  name?: string;
+  value?: string;
+  onChange?: (checked: boolean) => void;
 };
 
-function getStyle(state: State, border: boolean) {
-  const isDisabled = state === "disabled";
-  const isError = state === "error";
-  const isHover = state === "hover";
-  const isSelected = state === "selected";
-
-  // ベース
-  const colors = {
-    text: isDisabled ? "#9ca3af" : isError ? "#b91c1c" : "#111827",
-    border: isDisabled ? "#e5e7eb" : isError ? "#ef4444" : isHover ? "#2563eb" : "#d1d5db",
-    bg: isDisabled ? "#f3f4f6" : "#ffffff",
-    containerBorder: border
-      ? isDisabled
-        ? "#e5e7eb"
-        : isError
-          ? "#ef4444"
-          : isHover
-            ? "#2563eb"
-            : "#d1d5db"
-      : "transparent",
-    containerBg: border ? (isDisabled ? "#f9fafb" : "#ffffff") : "transparent",
-    helpBg: isDisabled ? "#e5e7eb" : "#6b7280",
-    helpText: "#ffffff",
-    checkBg: isDisabled ? "#e5e7eb" : isSelected ? "#2563eb" : "#ffffff",
-    checkBorder: isDisabled ? "#e5e7eb" : isError ? "#ef4444" : isHover ? "#2563eb" : "#9ca3af",
-    checkText: isDisabled ? "#9ca3af" : "#ffffff",
-  };
-
-  return { ...colors, isSelected, isDisabled };
-}
-
-export function Checkbox({
+export const Checkbox: React.FC<CheckboxProps> = ({
   label,
   width = "hug",
   border = false,
   state = "default",
   showHelp = true,
-}: CheckboxProps) {
-  const safeState: State = state ?? "default";
-  const styles = getStyle(safeState, border);
+  helpAriaLabel = "ヘルプ",
+  onHelpClick,
 
-  const isFill = width === "fill";
+  checked,
+  disabled,
+  name,
+  value,
+  onChange,
+}) => {
+  const isSelected = state === "selected";
+  const isDisabled = state === "disabled" || disabled === true;
+  const isError = state === "error";
+
+  // state で見た目を固定したいので、checked/disabled は state が指定されてたらそっちを優先
+  const resolvedChecked = typeof checked === "boolean" ? checked : isSelected;
+  const resolvedDisabled = isDisabled;
 
   return (
     <div
-      style={{
-        width: isFill ? 360 : "fit-content",
-        borderRadius: 10,
-        border: `1px solid ${styles.containerBorder}`,
-        background: styles.containerBg,
-        padding: border ? 12 : 0,
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 12,
-        opacity: styles.isDisabled ? 0.8 : 1,
-      }}
+      className="c-checkbox"
+      data-width={width}
+      data-border={border ? "true" : "false"}
+      data-state={state}
+      aria-invalid={isError ? "true" : "false"}
     >
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 10, minWidth: 0 }}>
-        {/* checkbox box */}
-        <div
-          aria-hidden
-          style={{
-            width: 18,
-            height: 18,
-            borderRadius: 4,
-            border: `2px solid ${styles.checkBorder}`,
-            background: styles.checkBg,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flex: "0 0 auto",
-          }}
-        >
-          {styles.isSelected ? (
-            <span style={{ color: styles.checkText, fontSize: 12, lineHeight: 1 }}>✓</span>
-          ) : null}
-        </div>
+      <label className="c-checkbox__label">
+        <input
+          className="c-checkbox__input"
+          type="checkbox"
+          name={name}
+          value={value}
+          checked={resolvedChecked}
+          disabled={resolvedDisabled}
+          onChange={(e) => onChange?.(e.target.checked)}
+        />
 
-        {/* label */}
-        <span
-          style={{
-            color: styles.text,
-            fontSize: 14,
-            fontWeight: 500,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {label}
+        <span className="c-checkbox__box" aria-hidden="true">
+          <svg
+            className="c-checkbox__check"
+            viewBox="0 0 16 16"
+            focusable="false"
+            aria-hidden="true"
+          >
+            <path d="M6.6 11.2 3.7 8.4 2.6 9.5l4 4 7-7-1.1-1.1-5.9 5.8z" />
+          </svg>
         </span>
-      </div>
 
-      {/* help icon */}
-      {showHelp ? (
-        <div
-          aria-hidden
-          style={{
-            width: 18,
-            height: 18,
-            borderRadius: 999,
-            background: styles.helpBg,
-            color: styles.helpText,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 12,
-            flex: "0 0 auto",
-          }}
+        <span className="c-checkbox__text">{label}</span>
+      </label>
+
+      {showHelp && (
+        <button
+          type="button"
+          className="c-checkbox__help"
+          aria-label={helpAriaLabel}
+          onClick={onHelpClick}
+          disabled={resolvedDisabled}
         >
           ?
-        </div>
-      ) : null}
+        </button>
+      )}
     </div>
   );
-}
+};

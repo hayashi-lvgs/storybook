@@ -1,0 +1,154 @@
+/* =========================
+   Checkbox (画像の見た目寄せ)
+   ========================= */
+
+.c-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 14px 16px;
+  border-radius: 10px;
+
+  /* width */
+  width: fit-content;
+}
+
+.c-checkbox[data-width="fill"] {
+  width: 100%;
+}
+
+/* 囲み枠 */
+.c-checkbox[data-border="true"] {
+  border: 1px solid #cfd6dd;
+  background: #ffffff;
+}
+
+.c-checkbox[data-border="false"] {
+  border: 1px solid transparent;
+  background: transparent;
+}
+
+/* label全体 */
+.c-checkbox__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  min-width: 0; /* label折返し */
+}
+
+/* inputは見えなくして箱で表現 */
+.c-checkbox__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 左の四角 */
+.c-checkbox__box {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid #9aa6b2;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+/* チェックマーク */
+.c-checkbox__check {
+  width: 16px;
+  height: 16px;
+  fill: #ffffff;
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+/* テキスト */
+.c-checkbox__text {
+  font-size: 16px;
+  line-height: 1.2;
+  color: #1f2933;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 右端の ? */
+.c-checkbox__help {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: none;
+  background: #6b7785;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+/* =========================
+   State styles
+   ========================= */
+
+/* hover: 青い枠/青いチェック枠（画像の雰囲気） */
+.c-checkbox[data-state="hover"] .c-checkbox__box {
+  border-color: #1e88e5;
+}
+.c-checkbox[data-state="hover"][data-border="true"] {
+  border-color: #1e88e5;
+}
+
+/* selected: 青背景 + 白チェック */
+.c-checkbox[data-state="selected"] .c-checkbox__box {
+  border-color: #1e88e5;
+  background: #1e88e5;
+}
+.c-checkbox[data-state="selected"] .c-checkbox__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* selected: 背景に薄い青 */
+.c-checkbox[data-state="selected"][data-border="false"] {
+  background: rgba(30, 136, 229, 0.10);
+}
+
+.c-checkbox[data-state="selected"][data-border="true"] {
+  background: rgba(30, 136, 229, 0.08);
+}
+
+/* error: 赤 */
+.c-checkbox[data-state="error"] .c-checkbox__box {
+  border-color: #d32f2f;
+}
+.c-checkbox[data-state="error"] .c-checkbox__text {
+  color: #d32f2f;
+}
+.c-checkbox[data-state="error"][data-border="true"] {
+  border-color: #d32f2f;
+}
+/* selected: 背景に薄い青 */
+.c-checkbox[data-state="error"][data-border="false"] {
+  background: rgba(229, 30, 30, 0.1);
+}
+
+.c-checkbox[data-state="error"][data-border="true"] {
+  background: rgba(195, 25, 25, 0.08);
+}
+
+/* disabled: 全体グレー & 操作不可 */
+.c-checkbox[data-state="disabled"] {
+  opacity: 0.55;
+}
+.c-checkbox[data-state="disabled"] .c-checkbox__label {
+  cursor: not-allowed;
+}
+.c-checkbox[data-state="disabled"] .c-checkbox__help {
+  cursor: not-allowed;
+}
