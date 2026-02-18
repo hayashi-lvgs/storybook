@@ -1,0 +1,29 @@
+import { Meta, Canvas, Story, Source } from "@storybook/addon-docs/blocks";
+import * as ButtonStories from "./Button.stories";
+
+<Meta of={ButtonStories} />
+
+# Button
+
+## All Variants
+
+<Canvas>
+  <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
+    <Story of={ButtonStories.Primary} />
+    <Story of={ButtonStories.Secondary} />
+    <Story of={ButtonStories.Disabled} />
+    <Story of={ButtonStories.Large} />
+  </div>
+</Canvas>
+
+## Usage (Code)
+
+<Source
+  language="tsx"
+  code={`import { Button } from "./Button";
+
+<Button label="Primary" />
+<Button label="Secondary" />
+<Button label="Disabled" disabled />
+<Button label="Large" size="large" />`}
+/>
